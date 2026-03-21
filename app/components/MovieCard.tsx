@@ -16,7 +16,7 @@ export default function MovieCard({ movie, index, onToggleStatus, onSelectMovie 
 
   React.useEffect(() => {
     if (posterUrl) return;
-    const API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb';
+    const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || '15d2ea6d0dc1d476efbca3eba2b9bbfb';
     let query = movie.title.replace('The Fantastic Four: First Steps', 'Fantastic Four').replace('Thunderbolts*', 'Thunderbolts');
     fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&year=${movie.year}`)
       .then(r => r.json())

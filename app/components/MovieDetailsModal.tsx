@@ -27,7 +27,7 @@ export default function MovieDetailsModal({ movie, onClose, onToggleStatus, onNa
   useEffect(() => {
     async function fetchData() {
       try {
-        const API_KEY = '15d2ea6d0dc1d476efbca3eba2b9bbfb';
+        const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || '15d2ea6d0dc1d476efbca3eba2b9bbfb';
         let query = movie.title.replace('The Fantastic Four: First Steps', 'Fantastic Four').replace('Thunderbolts*', 'Thunderbolts');
         
         const searchRes = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&year=${movie.year}`);
