@@ -24,7 +24,7 @@ A high-fidelity, cinematic archival interface for the Marvel Cinematic Universe.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone <your-repo-url>
+    git clone (https://github.com/gvraghuveer/avengers-watchlist)
     cd avengers-app
     ```
 
