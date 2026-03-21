@@ -226,10 +226,13 @@ export default function Dashboard() {
     <>
       <header className="fixed top-0 w-full z-40 bg-background/50 backdrop-blur-xl px-6 md:px-12 py-4 md:py-6 flex justify-between items-center border-b border-white/5">
         <div className="flex flex-col md:flex-row items-center gap-3">
-           <div className="w-8 h-8 md:w-10 md:h-10 rounded bg-primary flex items-center justify-center shadow-[0_0_15px_#E62429]">
-               <span className="material-symbols-outlined text-white text-base md:text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>movie</span>
+           <div className="w-10 h-10 md:w-12 md:h-12 relative flex items-center justify-center">
+               <img src="/logo.svg" alt="Avengers Logo" className="w-full h-full drop-shadow-[0_0_10px_rgba(230,36,41,0.5)]" />
            </div>
-           <div className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase mt-1">AVENGERS</div>
+           <div className="flex flex-col">
+              <div className="text-xl md:text-2xl font-black tracking-tighter text-white uppercase mt-0.5">AVENGERS</div>
+              <div className="text-[10px] md:text-xs font-mono tracking-[0.4em] text-primary uppercase mt-[-4px] font-bold">DATABASE</div>
+           </div>
         </div>
         <div className="hidden md:flex items-center relative group">
           <span className="material-symbols-outlined text-sm absolute left-4 text-white/50 pointer-events-none z-10">search</span>

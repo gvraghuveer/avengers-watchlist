@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Avengers Database | Access Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            background: #050505;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+        .portal {
+            animation: fadeIn 1.5s ease-out forwards;
+            opacity: 0;
+        }
+        h1 {
+            font-size: 3rem;
+            letter-spacing: -0.05em;
+            margin: 0;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 20px rgba(230, 36, 41, 0.4));
+        }
+        .loader {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5em;
+            color: #E62429;
+            animation: pulse 2s infinite;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="portal">
+        <img src="/logo.svg" alt="Avengers Logo" class="logo">
+        <h1>The Avengers Database</h1>
+        <div class="loader">Decryption in Progress...</div>
+    </div>
+    <script>
+        // Smooth transition to the main app
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 2500);
+    </script>
+</body>
+</html>

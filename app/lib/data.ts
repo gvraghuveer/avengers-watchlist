@@ -50,6 +50,6 @@ export const initialMovies: Movie[] = [
   { id: "f4", title: "The Fantastic Four: First Steps", phase: "Phase 6", year: "2025", streamingOn: "HOTSTAR" },
   { id: "thunderbolts", title: "Thunderbolts*", phase: "Phase 6", year: "2025", streamingOn: "HOTSTAR" },
   { id: "avengers5", title: "Avengers: Doomsday", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR" },
-  { id: "spidey4", title: "Spider-Man 4", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR" },
+  { id: "spidey4", title: "Spider-Man: Brand New Day", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR" },
   { id: "avengers6", title: "Avengers: Secret Wars", phase: "Phase 6", year: "2027", streamingOn: "HOTSTAR" }
 ];
