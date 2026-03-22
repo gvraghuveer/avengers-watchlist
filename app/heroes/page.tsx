@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
-export default function HeroesPage() {
+export default React.memo(function HeroesPage() {
   const heroes = [
     { name: "Iron Man", alias: "Tony Stark", spec: "Mark LXXXV Armor", color: "from-red-600 to-yellow-500", src: "https://image.tmdb.org/t/p/w1280/cKvDv2LpwVEqbdXWoQl4XgGN6le.jpg", stats: { combat: 85, intel: 100, strength: 80, tech: 100 } },
     { name: "Captain America", alias: "Steve Rogers", spec: "Vibranium Shield", color: "from-blue-700 to-red-600", src: "https://image.tmdb.org/t/p/w1280/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg", stats: { combat: 100, intel: 80, strength: 85, tech: 20 } },
@@ -37,7 +38,7 @@ export default function HeroesPage() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden glass-card group border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer"
           >
-              <img src={h.src} className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[2.5s] ease-out group-hover:scale-110" alt={h.name} />
+              <Image fill src={h.src} className="object-cover object-center transition-transform duration-[2.5s] ease-out group-hover:scale-110" alt={h.name} />
               <div className={`absolute inset-0 bg-gradient-to-tr ${h.color} mix-blend-soft-light opacity-50 group-hover:opacity-70 transition-opacity duration-1000`}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700"></div>
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-700 backdrop-blur-[2px]"></div>

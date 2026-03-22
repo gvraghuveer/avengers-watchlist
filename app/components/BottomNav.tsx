@@ -8,8 +8,8 @@ export default function BottomNav() {
   const pathname = usePathname();
   
   return (
-    <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-      <div className="bg-background/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 shadow-2xl flex items-center justify-around relative overflow-hidden">
+    <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md pointer-events-none">
+      <div className="bg-background/80 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 shadow-2xl flex items-center justify-around relative overflow-hidden pointer-events-auto cursor-grab active:cursor-grabbing">
         {/* Active Indicator Background */}
         <motion.div 
           className="absolute h-12 w-[30%] bg-white/5 rounded-2xl border border-white/5"

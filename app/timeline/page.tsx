@@ -1,164 +1,295 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { useMovies } from "../context/MovieContext";
 import { Movie } from "../lib/data";
 
-const TimelineNode = ({ movie, onClick, hideInfo = false }: { movie: Movie, onClick: () => void, hideInfo?: boolean }) => {
-  const [posterUrl, setPosterUrl] = useState<string | null>(movie.poster || null);
-  useEffect(() => {
-    if (posterUrl) return;
-    const API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY || '15d2ea6d0dc1d476efbca3eba2b9bbfb';
-    let query = movie.title.replace('The Fantastic Four: First Steps', 'Fantastic Four').replace('Thunderbolts*', 'Thunderbolts');
-    fetch(`https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&year=${movie.year}`)
-      .then(r => r.json())
-      .then(d => { if (d.results && d.results[0]?.poster_path) setPosterUrl(`https://image.tmdb.org/t/p/w500${d.results[0].poster_path}`); })
-      .catch(e => console.error(e));
-  }, [movie]);
+const TimelineNode = React.memo(
+  ({ movie, index }: { movie: Movie; index: number }) => {
+    const [posterUrl, setPosterUrl] = React.useState<string | null>(
+      movie.poster || null,
+    );
 
-  return (
-    <div className="flex flex-col group cursor-pointer w-full max-w-[300px]" onClick={onClick}>
-      <div className="w-full aspect-[2/3] rounded-xl overflow-hidden mb-4 border border-white/10 group-hover:border-primary/50 transition-colors shadow-2xl relative bg-surface-container-highest">
-        {posterUrl ? (
-          <img src={posterUrl} alt={movie.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-        ) : (
-          <div className="w-full h-full animate-pulse flex items-center justify-center">
-            <span className="material-symbols-outlined text-white/20 text-4xl">image</span>
+    React.useEffect(() => {
+      if (posterUrl) return;
+      const API_KEY =
+        process.env.NEXT_PUBLIC_TMDB_API_KEY ||
+        "15d2ea6d0dc1d476efbca3eba2b9bbfb";
+      let query = movie.title
+        .replace("The Fantastic Four: First Steps", "Fantastic Four")
+        .replace("Thunderbolts*", "Thunderbolts");
+      fetch(
+        `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&year=${movie.year}`,
+      )
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.results && d.results[0]?.poster_path)
+            setPosterUrl(
+              `https://image.tmdb.org/t/p/w500${d.results[0].poster_path}`,
+            );
+        })
+        .catch((e) => console.error(e));
+    }, [movie]);
+
+    return (
+      <motion.div
+        layout="position"
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: "-10%" }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+          delay: (index % 6) * 0.03,
+        }}
+        whileHover={{ scale: 1.05, y: -8, zIndex: 10 }}
+        className="relative group cursor-pointer"
+      >
+        <div className="relative aspect-[2/3] rounded-lg md:rounded-xl overflow-hidden border transition-all duration-500 shadow-xl border-white/5 group-hover:border-white/40">
+          {posterUrl ? (
+            <Image
+              fill
+              src={posterUrl}
+              alt={movie.title}
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          ) : (
+            <div className="w-full h-full bg-surface-container-highest flex flex-col items-center justify-center p-2">
+              <span className="material-symbols-outlined text-white/10 text-2xl md:text-5xl animate-pulse">
+                movie
+              </span>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
+
+          <div className="absolute bottom-2 left-2 right-2 md:bottom-3 md:left-3 flex justify-between items-end">
+            <div>
+              <p className="text-[7px] md:text-[9px] font-mono text-primary font-black uppercase tracking-widest">
+                {movie.year} // CONTINUITY
+              </p>
+              <h4 className="text-[10px] md:text-sm font-black text-white leading-tight truncate uppercase tracking-tighter mt-0.5">
+                {movie.title}
+              </h4>
+            </div>
+            <div className="flex gap-0.5 mb-0.5">
+              {[...Array(movie.postCredits)].map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 h-1 rounded-full bg-primary/60 shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]"
+                />
+              ))}
+            </div>
           </div>
-        )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-           <span className="font-mono text-xs uppercase tracking-widest text-primary font-black">Decrypt</span>
+
+          {movie.status === "WATCHED" && (
+            <div className="absolute top-2 right-2 w-5 h-5 md:w-7 md:h-7 bg-primary rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
+              <span className="material-symbols-outlined text-[12px] md:text-[16px] text-black font-black">
+                check
+              </span>
+            </div>
+          )}
         </div>
-      </div>
-      {!hideInfo && (
-        <>
-          <h4 className="text-xl md:text-2xl font-black text-white group-hover:text-primary transition-colors tracking-tighter leading-tight drop-shadow-lg">{movie.title}</h4>
-          <p className="text-secondary font-mono text-xs tracking-widest uppercase mt-2">{movie.year} • {movie.phase}</p>
-        </>
-      )}
-    </div>
-  );
-};
+      </motion.div>
+    );
+  },
+);
+
+const TemporalBackground = () => (
+  <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-black">
+    {/* Animated Mesh Gradient */}
+    <div className="absolute inset-0 opacity-40 mix-blend-screen bg-[radial-gradient(circle_at_50%_50%,rgba(var(--primary-rgb),0.15),transparent_70%),radial-gradient(circle_at_0%_0%,rgba(74,144,226,0.1),transparent_50%),radial-gradient(circle_at_100%_100%,rgba(153,0,0,0.1),transparent_50%)] animate-[pulse_10s_infinite_alternate]" />
+
+    {/* Scanlines Effect */}
+    <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%]" />
+
+    {/* Floating Particles - Reduced for performance */}
+    {[...Array(15)].map((_, i) => (
+      <motion.div
+        key={i}
+        className="absolute w-px h-20 bg-gradient-to-b from-transparent via-primary/10 to-transparent"
+        style={{
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
+        }}
+        animate={{ y: [0, 400], opacity: [0, 0.3, 0] }}
+        transition={{
+          duration: 8 + Math.random() * 10,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+    ))}
+  </div>
+);
 
 export default function TimelinePage() {
-  const { movies, searchQuery, setSelectedMovie } = useMovies();
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [scrollRange, setScrollRange] = useState(0);
+  const { movies, setSelectedMovie, selectedMovie } = useMovies();
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [activePhase, setActivePhase] = useState("Phase 1");
 
-  const filteredMovies = movies.filter(m => 
-     m.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-     m.phase.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const phaseSections = useMemo(() => {
+    const phases = [
+      "Phase 1",
+      "Phase 2",
+      "Phase 3",
+      "Phase 4",
+      "Phase 5",
+      "Phase 6",
+    ];
+    return phases
+      .map((p) => ({
+        title: p,
+        movies: movies
+          .filter((m) => m.phase === p)
+          .sort((a, b) => parseInt(a.year) - parseInt(b.year)),
+      }))
+      .filter((p) => p.movies.length > 0);
+  }, [movies]);
 
-  const { scrollYProgress } = useScroll({ 
-     target: timelineRef,
-     offset: ["start start", "end end"]
-  });
-  
   useEffect(() => {
-     if (containerRef.current) {
-        setScrollRange(containerRef.current.scrollWidth - window.innerWidth);
-        const handleResize = () => setScrollRange(containerRef.current!.scrollWidth - window.innerWidth);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-     }
-  }, [filteredMovies]);
+    const handleMouseMove = (e: MouseEvent) =>
+      setMousePos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  // Intersection Observer to track active phase
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    phaseSections.forEach((section) => {
+      const id = `phase-${section.title.replace(" ", "-")}`;
+      const el = document.getElementById(id);
+      if (el) {
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            if (entry.isIntersecting) setActivePhase(section.title);
+          },
+          { threshold: 0.2, rootMargin: "-20% 0px -60% 0px" },
+        );
+        observer.observe(el);
+        observers.push(observer);
+      }
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, [phaseSections]);
 
-  const taglines: Record<string, string> = {
-    "Iron Man": "The birth of a hero - and a universe.",
-    "The Incredible Hulk": "A fugitive battles his inner monster.",
-    "Iron Man 2": "Tony Stark faces his past - and legacy.",
-    "Thor": "Two worlds collide - one God falls.",
-    "Captain America: The First Avenger": "The first super-soldier is born.",
-    "The Avengers": "Earth's mightiest heroes finally unite.",
-    "Iron Man 3": "The hero must face his demons alone.",
-    "Thor: The Dark World": "An ancient threat returns to the Nine Realms.",
-    "Captain America: The Winter Soldier": "S.H.I.L.D. is compromised - trust no one.",
-    "Guardians of the Galaxy": "A team of outlaws saves the galaxy.",
-    "Avengers: Age of Ultron": "The heroes face their own creation.",
-    "Ant-Man": "Small hero - big impact.",
-    "Captain America: Civil War": "A house divided cannot stand.",
-    "Black Widow": "Family returns for one last mission.",
-    "Black Panther": "Long live the King.",
-    "Spider-Man: Homecoming": "A young hero finds his feet.",
-    "Doctor Strange": "Magic enters the Marvel Universe.",
-    "Thor: Ragnarok": "Asgard's end - a new beginning.",
-    "Ant-Man and the Wasp": "A partner in crime-fighting.",
-    "Avengers: Infinity War": "Half the universe vanishes.",
-    "Avengers: Endgame": "The final stand - whatever it takes.",
-    "Spider-Man: Far From Home": "Stepping out of the shadow.",
-    "Shang-Chi and the Legend of the Ten Rings": "The legend begins.",
-    "Spider-Man: No Way Home": "Multiple universes - one Spider-Man.",
-    "Doctor Strange in the Multiverse of Madness": "The multiverse is unleashed.",
-    "Black Panther: Wakanda Forever": "A new Protector rises.",
-    "Guardians of the Galaxy Vol. 3": "One last ride for the team.",
-    "Deadpool & Wolverine": "The ultimate team-up.",
-    "Avengers: Doomsday": "A new threat emerges.",
-    "Avengers: Secret Wars": "The final battle for existence."
+  const scrollToPhase = (title: string) => {
+    const el = document.getElementById(`phase-${title.replace(" ", "-")}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <motion.section key="timeline" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full relative -mt-32">
-      <div ref={timelineRef} className="h-[350vh] relative w-full">
-         <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-background">
-            <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-0"></div>
+    <section className="min-h-screen bg-black relative overflow-x-hidden pt-24 pb-48">
+      <TemporalBackground />
 
-            <div className="absolute top-12 left-8 md:left-24 z-0 pointer-events-none opacity-40">
-               <h2 className="text-4xl md:text-9xl font-black text-white/[0.03] uppercase tracking-tighter leading-none select-none">The Sacred<br/><span className="text-primary/20 italic">Timeline</span></h2>
-            </div>
+      {/* Laser Focus/Glow follows mouse */}
+      <div
+        className="fixed inset-0 pointer-events-none z-10 opacity-30"
+        style={{
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary-rgb),0.1), transparent 80%)`,
+        }}
+      />
 
-            <div className="w-full relative flex items-center h-[70vh]">
-               <motion.div ref={containerRef} style={{ x }} className="flex flex-row items-center gap-16 md:gap-32 pl-[25vw] pr-[15vw] xl:pr-[25vw] w-max relative h-full">
-                  
-                  <div className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-y-1/2 z-0 pointer-events-none shadow-[0_0_20px_rgba(255,255,255,0.2)]"></div>
-                  <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/40 transform -translate-y-1/2 z-0 pointer-events-none blur-[1px]"></div>
-
-                  {[...filteredMovies].sort((a,b) => parseInt(a.year) - parseInt(b.year)).map((m, i, arr) => {
-                     const prevM = i > 0 ? arr[i-1] : null;
-                     const showPhaseMarker = !prevM || prevM.phase !== m.phase;
-                     const phaseLabel = m.phase.replace('Phase ', '').toUpperCase();
-
-                     return (
-                        <div key={m.id} className="relative z-10 flex flex-col items-center justify-center w-[320px] shrink-0 group h-full">
-                           {showPhaseMarker && (
-                           <div className="absolute -left-12 md:-left-24 top-0 bottom-0 flex flex-col justify-center pointer-events-none">
-                              <div className="h-[40vh] w-[1px] bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
-                              <div className="absolute left-4 top-[10%] opacity-10">
-                                 <span className="text-8xl font-black italic tracking-tighter">0{phaseLabel}</span>
-                              </div>
-                           </div>
-                           )}
-
-                           <div className="absolute top-[10%] opacity-0 group-hover:opacity-100 transition-all duration-700 -translate-y-2 group-hover:translate-y-0 pointer-events-none text-center w-full z-30">
-                              <p className="text-[10px] font-mono text-primary font-bold uppercase tracking-[0.3em] mb-1">{m.year}</p>
-                              <h5 className="text-xl font-bold tracking-tight text-white/90">{m.title}</h5>
-                           </div>
-                           <div className="relative z-20 scale-90 group-hover:scale-100 transition-transform duration-700">
-                              <TimelineNode movie={m} onClick={() => setSelectedMovie(m)} hideInfo={true} />
-                           </div>
-                           
-                           <div className="absolute bottom-[5%] w-full flex flex-col items-center scale-90 group-hover:scale-100 transition-all duration-700">
-                           <div className="relative flex items-center justify-center">
-                              <div className={`absolute w-[1px] h-20 ${m.status === 'WATCHED' ? 'bg-tertiary/60' : 'bg-white/10'} -top-20 -z-10`}></div>
-                              <div className={`w-10 h-10 rounded-full border-[8px] border-background z-20 transition-all duration-500 flex items-center justify-center cursor-pointer ${m.status === 'WATCHED' ? 'bg-tertiary shadow-[0_0_20px_rgba(40,167,69,0.9)]' : m.status === 'TO_WATCH' ? 'bg-secondary' : 'bg-white/10'}`}>
-                                 {m.status === 'WATCHED' && <span className="material-symbols-outlined text-[16px] text-black font-black">check</span>}
-                              </div>
-                           </div>
-                           <div className="mt-4 flex flex-col items-center gap-2 text-center px-4">
-                              <span className="font-mono text-[9px] uppercase tracking-widest text-zinc-500 font-bold bg-white/5 px-4 py-1.5 rounded-full border border-white/5 transition-all group-hover:border-primary/30 group-hover:text-primary">Phase {phaseLabel}</span>
-                              <p className="text-[9px] leading-relaxed text-zinc-400 font-medium italic opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 max-w-[200px]">"{taglines[m.title] || "The saga continues..."}"</p>
-                           </div>
-                           </div>
-                        </div>
-                     );
-                  })}
-               </motion.div>
-            </div>
-         </div>
+      {/* PC Side Navigation */}
+      <div className="hidden xl:flex fixed left-12 top-1/2 -translate-y-1/2 flex-col gap-6 z-50">
+        <div className="w-px h-32 bg-gradient-to-b from-transparent via-primary/40 to-transparent mx-auto mb-4" />
+        {phaseSections.map((p) => {
+          const isActive = activePhase === p.title;
+          return (
+            <button
+              key={p.title}
+              onClick={() => scrollToPhase(p.title)}
+              className="group flex items-center gap-4 text-left"
+            >
+              <span
+                className={`text-[10px] font-mono transition-all group-hover:text-primary group-hover:translate-x-2 ${isActive ? "text-primary" : "text-white/20"}`}
+              >
+                0{p.title.split(" ")[1]}
+              </span>
+              <div
+                className={`w-2 h-2 rounded-full border transition-all ${isActive ? "bg-primary border-primary scale-150" : "border-white/20 group-hover:bg-primary group-hover:border-primary"}`}
+              />
+              <span
+                className={`text-[9px] font-mono uppercase tracking-[0.4em] transition-all -translate-x-4 group-hover:translate-x-0 ${isActive ? "opacity-100 text-white" : "opacity-0 group-hover:opacity-100 text-white/10"}`}
+              >
+                {p.title}
+              </span>
+            </button>
+          );
+        })}
+        <div className="w-px h-32 bg-gradient-to-b from-transparent via-primary/40 to-transparent mx-auto mt-4" />
       </div>
-    </motion.section>
+
+      <div className="max-w-7xl mx-auto px-4 md:px-12 relative z-10 lg:pl-48">
+        {phaseSections.map((section) => (
+          <div
+            key={section.title}
+            id={`phase-${section.title.replace(" ", "-")}`}
+            className="mb-48 last:mb-0 group"
+          >
+            <div className="relative mb-12">
+              {/* Parallax Background Text */}
+              <h3
+                className="absolute -top-12 md:-top-24 left-0 text-7xl md:text-[14rem] font-black text-transparent stroke-white/5 stroke-[1px] select-none whitespace-nowrap pointer-events-none group-hover:stroke-primary/10 transition-all duration-1000"
+                style={{ WebkitTextStroke: "1px rgba(255,255,255,0.05)" }}
+              >
+                {section.title.toUpperCase()}
+              </h3>
+
+              <div className="relative flex items-end justify-between border-b border-white/10 pb-4">
+                <div>
+                  <p className="text-[10px] md:text-xs font-mono text-primary uppercase tracking-[0.5em] font-black mb-1">
+                    Sector Progress
+                  </p>
+                  <h4 className="text-2xl md:text-5xl font-black text-white italic tracking-tighter uppercase leading-none">
+                    Cinematic Archive
+                  </h4>
+                </div>
+                <div className="text-right hidden sm:block">
+                  <p className="text-[10px] font-mono text-white/20 uppercase tracking-widest">
+                    {section.movies.length} Temporal Records Found
+                  </p>
+                  <div className="h-1 w-32 bg-white/5 rounded-full mt-2 overflow-hidden">
+                    <motion.div
+                      className="h-full bg-primary"
+                      initial={{ width: 0 }}
+                      whileInView={{
+                        width: `${(section.movies.filter((m) => m.status === "WATCHED").length / section.movies.length) * 100}%`,
+                      }}
+                      viewport={{ once: true }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* INCREASED CARD SIZE: 3 on mobile, 4 tablet, 5-6 desktop */}
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-10">
+              {section.movies.map((movie, idx) => (
+                <TimelineNode key={movie.id} movie={movie} index={idx} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Floating HUD - Compact for PC */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-black/60 backdrop-blur-3xl border border-white/10 rounded-full flex items-center gap-8 shadow-[0_0_30px_rgba(0,0,0,0.5)] lg:hidden">
+        <div className="flex gap-2">
+          {phaseSections.map((p) => (
+            <button
+              key={p.title}
+              onClick={() => scrollToPhase(p.title)}
+              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-[10px] font-mono text-white/40 hover:text-primary hover:border-primary transition-all"
+            >
+              {p.title.split(" ")[1]}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
