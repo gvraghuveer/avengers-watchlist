@@ -108,168 +108,6 @@ const TimelineNode = React.memo(
 );
 TimelineNode.displayName = "TimelineNode";
 
-/* ─────────────────── Movie Detail Modal ─────────────────── */
-function MovieModal({ movie, movies, onClose }: { movie: Movie; movies: Movie[]; onClose: () => void }) {
-  // Close on backdrop click
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
-  // Close on Escape key
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [onClose]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
-      onClick={handleBackdropClick}
-    >
-      <motion.div
-        initial={{ scale: 0.92, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.92, opacity: 0, y: 20 }}
-        transition={{ type: "spring", stiffness: 300, damping: 28 }}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border border-white/10 rounded-2xl shadow-[0_0_80px_rgba(0,0,0,0.8)]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* ── Backdrop blurred poster ── */}
-        {movie.poster && (
-          <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-            <img
-              src={movie.poster}
-              alt=""
-              className="w-full h-64 object-cover scale-150 blur-3xl opacity-10"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-zinc-950/60 to-zinc-950" />
-          </div>
-        )}
-
-        {/* ── Close Button – always visible ── */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-full border-2 border-white/20 shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-all"
-          aria-label="Close"
-        >
-          <X className="w-4 h-4" strokeWidth={3} />
-          Close
-        </button>
-
-        {/* ── Content ── */}
-        <div className="relative z-[1] p-6 md:p-8">
-          {/* Header row */}
-          <div className="flex gap-6 mb-8">
-            {movie.poster && (
-              <div className="relative flex-shrink-0 w-28 md:w-36 aspect-[2/3] rounded-xl overflow-hidden border border-white/20 shadow-2xl">
-                <img src={movie.poster} alt={movie.title} className="w-full h-full object-cover" />
-              </div>
-            )}
-            <div className="flex flex-col justify-end pr-16">
-              <span className="text-primary font-mono text-[10px] uppercase tracking-[0.3em] font-black mb-1">
-                Record No. {movie.id.toUpperCase()}
-              </span>
-              <h2 className="text-2xl md:text-4xl font-black text-white uppercase italic tracking-tighter leading-[0.9] mb-4">
-                {movie.title}
-              </h2>
-              <div className="flex flex-wrap gap-x-6 gap-y-2">
-                {[
-                  { label: "Year", value: movie.year },
-                  { label: "Runtime", value: `${movie.runtime} min` },
-                  { label: "Phase", value: movie.phase },
-                  ...(movie.streamingOn ? [{ label: "Stream", value: movie.streamingOn }] : []),
-                ].map((item) => (
-                  <div key={item.label} className="flex flex-col">
-                    <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest">{item.label}</span>
-                    <span className="text-sm font-black text-white/80 uppercase">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Synopsis */}
-          {movie.synopsis && (
-            <div className="mb-6 bg-white/[0.03] border border-white/5 p-5 rounded-xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-primary rounded-l-xl" />
-              <h5 className="text-[10px] text-primary/60 font-mono uppercase tracking-[0.4em] mb-3 flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">analytics</span> Mission Overview
-              </h5>
-              <p className="text-sm text-zinc-300 leading-relaxed italic">{movie.synopsis}</p>
-            </div>
-          )}
-
-          {/* Cast */}
-          {movie.cast && movie.cast.length > 0 && (
-            <div className="mb-6">
-              <h5 className="text-[10px] text-white/40 font-mono uppercase tracking-[0.4em] mb-3">Tactical Assets (Cast)</h5>
-              <div className="flex flex-wrap gap-2">
-                {movie.cast.map((heroId) => (
-                  <div key={heroId} className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-lg border border-white/10 hover:border-primary/40 transition-all">
-                    <span className="material-symbols-outlined text-sm text-primary">shield</span>
-                    <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">{heroId}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Prerequisites */}
-          {movie.requires && movie.requires.length > 0 && (
-            <div className="mb-6">
-              <h5 className="text-[10px] text-white/40 font-mono uppercase tracking-[0.4em] mb-3">Watch First</h5>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {movie.requires.map((reqId) => {
-                  const req = movies.find((m) => m.id === reqId);
-                  return (
-                    <div key={reqId} className="flex items-center gap-3 p-3 bg-primary/5 border border-primary/10 rounded-xl">
-                      <div className="w-8 h-10 bg-black/40 rounded border border-white/10 overflow-hidden flex-shrink-0">
-                        {req?.poster ? (
-                          <img src={req.poster} className="w-full h-full object-cover" alt="" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="material-symbols-outlined text-xs">movie</span>
-                          </div>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-black text-white uppercase tracking-tighter leading-tight">{req?.title || reqId}</p>
-                        <p className="text-[8px] font-mono text-primary/60 uppercase">{req?.phase ?? ""}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Nexus Point */}
-          {movie.nexusPoint && (
-            <div className="bg-red-500/5 border border-red-500/20 p-5 rounded-xl relative overflow-hidden">
-              <h5 className="text-[10px] text-red-400 font-mono uppercase tracking-[0.4em] mb-3 flex items-center gap-2">
-                <span className="material-symbols-outlined text-xs">error</span> Continuity Anomaly
-              </h5>
-              <p className="text-sm text-red-200/80 italic font-bold">"{movie.nexusPoint}"</p>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-white/5 text-center">
-            <p className="text-[9px] font-mono text-white/10 uppercase tracking-[0.5em]">
-              Global Multiversal Security // Jarvis OS v4.2
-            </p>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 /* ─────────────────── Background ─────────────────── */
 const TemporalBackground = () => (
   <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden bg-black">
@@ -289,8 +127,7 @@ const TemporalBackground = () => (
 
 /* ─────────────────── Page ─────────────────── */
 export default function TimelinePage() {
-  const { movies } = useMovies();
-  const [expandedData, setExpandedData] = useState<Movie | null>(null);
+  const { movies, setSelectedMovie, selectedMovie } = useMovies();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activePhase, setActivePhase] = useState("Phase 1");
 
@@ -399,8 +236,8 @@ export default function TimelinePage() {
                   key={movie.id}
                   movie={movie}
                   index={idx}
-                  isSelected={expandedData?.id === movie.id}
-                  onClick={() => setExpandedData(movie)}
+                  isSelected={selectedMovie?.id === movie.id}
+                  onClick={() => setSelectedMovie(movie)}
                 />
               ))}
             </div>
@@ -421,16 +258,7 @@ export default function TimelinePage() {
         ))}
       </div>
 
-      {/* Movie Detail Modal */}
-      <AnimatePresence>
-        {expandedData && (
-          <MovieModal
-            movie={expandedData}
-            movies={movies}
-            onClose={() => setExpandedData(null)}
-          />
-        )}
-      </AnimatePresence>
+      {/* GlobalModal in LayoutWrapper handles this automatically */}
       <ScrollToTop />
     </section>
   );

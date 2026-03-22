@@ -436,7 +436,7 @@ export default function MovieDetailsModal({
               <p className="text-[10px] text-zinc-500 font-mono tracking-[0.3em] uppercase mb-4 font-bold text-center md:text-left">
                 Available On
               </p>
-              <div className="flex gap-2 justify-center md:justify-start">
+              <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-2 justify-center md:justify-start">
                 {searchLinks.map((link) => (
                   <motion.a
                     key={link.name}
