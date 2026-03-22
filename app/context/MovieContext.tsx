@@ -1,6 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialMovies, Movie, Status } from '../lib/data';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { initialMovies, Movie, Status } from "../lib/data";
 
 interface MovieContextType {
   movies: Movie[];
@@ -9,7 +9,7 @@ interface MovieContextType {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   selectedMovie: Movie | null;
-  setSelectedMovie: (m: Movie | null) => void;
+  setSelectedMovie: React.Dispatch<React.SetStateAction<Movie | null>>;
   sortBy: "RELEASE" | "CHRONO";
   setSortBy: (s: "RELEASE" | "CHRONO") => void;
   selectedPhase: string;
@@ -35,11 +35,15 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setMovies(initialMovies.map(m => {
-          const found = parsed.find((p: any) => p.id === m.id);
-          return found && found.status ? { ...m, status: found.status } : m;
-        }));
-      } catch (e) { console.error(e); }
+        setMovies(
+          initialMovies.map((m) => {
+            const found = parsed.find((p: any) => p.id === m.id);
+            return found && found.status ? { ...m, status: found.status } : m;
+          }),
+        );
+      } catch (e) {
+        console.error(e);
+      }
     }
   }, []);
 
@@ -50,18 +54,29 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
   }, [movies, mounted]);
 
   const toggleStatus = (id: string, nextStatus: Status) => {
-    setMovies(prev => prev.map(m => m.id === id ? { ...m, status: nextStatus } : m));
+    setMovies((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, status: nextStatus } : m)),
+    );
   };
 
   return (
-    <MovieContext.Provider value={{
-      movies, setMovies, toggleStatus, 
-      searchQuery, setSearchQuery, 
-      selectedMovie, setSelectedMovie,
-      sortBy, setSortBy,
-      selectedPhase, setSelectedPhase,
-      selectedHero, setSelectedHero
-    }}>
+    <MovieContext.Provider
+      value={{
+        movies,
+        setMovies,
+        toggleStatus,
+        searchQuery,
+        setSearchQuery,
+        selectedMovie,
+        setSelectedMovie,
+        sortBy,
+        setSortBy,
+        selectedPhase,
+        setSelectedPhase,
+        selectedHero,
+        setSelectedHero,
+      }}
+    >
       {children}
     </MovieContext.Provider>
   );
@@ -70,7 +85,7 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
 export function useMovies() {
   const context = useContext(MovieContext);
   if (context === undefined) {
-    throw new Error('useMovies must be used within a MovieProvider');
+    throw new Error("useMovies must be used within a MovieProvider");
   }
   return context;
 }
