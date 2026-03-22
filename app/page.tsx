@@ -3,6 +3,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useMovies } from "./context/MovieContext";
 import MovieCard from "./components/MovieCard";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function ArchivePage() {
   const {
@@ -247,6 +248,7 @@ export default function ArchivePage() {
           );
         })}
       </div>
+      <ScrollToTop />
     </motion.section>
   );
 }

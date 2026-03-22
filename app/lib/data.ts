@@ -57,6 +57,6 @@ export const initialMovies: Movie[] = [
   { id: "f4", title: "The Fantastic Four: First Steps", phase: "Phase 6", year: "2025", streamingOn: "HOTSTAR", runtime: 130, postCredits: 1, cast: ['richards'], timeline: "BRANCH", rumors: ["avengers5"] },
   { id: "thunderbolts", title: "Thunderbolts*", phase: "Phase 6", year: "2025", streamingOn: "HOTSTAR", runtime: 130, postCredits: 1, cast: ['yelena'], timeline: "SACRED" },
   { id: "avengers5", title: "Avengers: Doomsday", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR", runtime: 150, postCredits: 1, cast: ['stark'], timeline: "FUTURE" },
-  { id: "spidey4", title: "Spider-Man 4", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR", runtime: 130, postCredits: 1, cast: ['parker'], timeline: "FUTURE" },
+  { id: "spidey4", title: "Spider-Man: Brand New Day", phase: "Phase 6", year: "2026", streamingOn: "HOTSTAR", runtime: 130, postCredits: 1, cast: ['parker'], timeline: "FUTURE" },
   { id: "avengers6", title: "Avengers: Secret Wars", phase: "Phase 6", year: "2027", streamingOn: "HOTSTAR", runtime: 180, postCredits: 1, cast: ['avengers'], timeline: "FUTURE" }
 ];

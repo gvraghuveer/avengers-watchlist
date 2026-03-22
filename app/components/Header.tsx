@@ -1,9 +1,12 @@
 "use client";
 import React from 'react';
 import { useMovies } from '../context/MovieContext';
+import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { searchQuery, setSearchQuery } = useMovies();
+  const pathname = usePathname();
+  const isHeroesPage = pathname === '/heroes';
 
   return (
     <header className="fixed top-0 w-full z-40 bg-background/50 backdrop-blur-xl px-4 md:px-12 py-3 md:py-6 flex justify-between items-center border-b border-white/5">
@@ -16,16 +19,18 @@ export default function Header() {
             <div className="text-[8px] md:text-xs font-mono tracking-[0.4em] text-primary uppercase mt-0.5 font-bold">DATABASE</div>
          </div>
       </div>
-      <div className="flex items-center relative group max-w-[150px] md:max-w-none">
-        <span className="material-symbols-outlined text-[12px] md:text-sm absolute left-3 md:left-4 text-white/50 pointer-events-none z-10">search</span>
-        <input 
-           type="text" 
-           placeholder="Search..." 
-           value={searchQuery}
-           onChange={(e) => setSearchQuery(e.target.value)}
-           className="bg-white/5 border border-white/10 rounded-full py-1.5 md:py-2.5 pl-9 md:pl-10 pr-4 md:pr-6 text-[10px] md:text-xs font-mono uppercase tracking-widest text-white outline-none focus:bg-white/10 focus:border-white/30 transition-all duration-500 w-full md:w-48 md:focus:w-80 placeholder:text-white/20 shadow-inner"
-        />
-      </div>
+      {!isHeroesPage && (
+        <div className="flex items-center relative group max-w-[150px] md:max-w-none">
+          <span className="material-symbols-outlined text-[12px] md:text-sm absolute left-3 md:left-4 text-white/50 pointer-events-none z-10">search</span>
+          <input 
+             type="text" 
+             placeholder="Search..." 
+             value={searchQuery}
+             onChange={(e) => setSearchQuery(e.target.value)}
+             className="bg-white/5 border border-white/10 rounded-full py-1.5 md:py-2.5 pl-9 md:pl-10 pr-4 md:pr-6 text-[10px] md:text-xs font-mono uppercase tracking-widest text-white outline-none focus:bg-white/10 focus:border-white/30 transition-all duration-500 w-full md:w-48 md:focus:w-80 placeholder:text-white/20 shadow-inner"
+          />
+        </div>
+      )}
     </header>
   );
 }
