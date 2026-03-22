@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: 'Personalized records of the Marvel Cinematic Multiverse.',
 }
 
+import LayoutWrapper from './components/LayoutWrapper'
+
 export default function RootLayout({
   children,
 }: {
@@ -19,7 +21,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
       </head>
       <body className="font-body selection:bg-primary selection:text-on-secondary min-h-screen">
-        {children}
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
       </body>
     </html>
   )
