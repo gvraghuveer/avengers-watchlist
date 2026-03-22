@@ -2,7 +2,7 @@
 
 A high-fidelity, cinematic archival interface for the Marvel Cinematic Universe. Track your progress across phases, explore the Sacred Timeline, and manage your ultimate MCU watchlist.
 
-![The Avengers Database Banner](/logo.svg)
+![The Avengers Database Banner](/public/logo.svg)
 
 ## ✨ Features
 
@@ -24,7 +24,7 @@ A high-fidelity, cinematic archival interface for the Marvel Cinematic Universe.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone <your-repo-url>
+    git clone https://github.com/gvraghuveer/avengers-watchlist
     cd avengers-app
     ```
 
