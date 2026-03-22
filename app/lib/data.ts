@@ -13,6 +13,7 @@ export interface Movie {
   runtime: number; // in minutes
   postCredits: number; // 0, 1, or 2
   cast: string[]; // Hero IDs like 'stark', 'rogers', etc.
+  timeline?: "SACRED" | "BRANCH" | "FUTURE"; // Multiverse Designation
 }
 
 export const initialMovies: Movie[] = [

@@ -128,14 +128,25 @@ export default function MovieDetailsModal({ movie, onClose, onToggleStatus, onNa
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.95, y: 20 }}
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-6xl bg-surface-container border border-white/10 md:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative my-auto min-h-[100dvh] md:min-h-0 md:h-[80vh]"
+        className="w-full max-w-6xl bg-surface-container border border-white/10 md:rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row relative my-auto min-h-[100dvh] md:min-h-0 md:h-[85vh]"
       >
-        <button onClick={onClose} className="absolute top-4 right-4 z-50 p-2 glass-card rounded-full text-white hover:text-primary transition-colors border border-white/10">
-          <X className="w-5 h-5 relative z-10" />
+        {/* Mobile Header / Close Button */}
+        <div className="md:hidden fixed top-0 left-0 right-0 z-[60] p-4 flex justify-end bg-gradient-to-b from-background/80 to-transparent pointer-events-none">
+           <button 
+             onClick={onClose} 
+             className="p-3 bg-background/50 backdrop-blur-xl rounded-full text-white border border-white/10 shadow-2xl pointer-events-auto"
+           >
+             <X className="w-6 h-6" />
+           </button>
+        </div>
+
+        {/* Desktop Close Button */}
+        <button onClick={onClose} className="hidden md:block absolute top-6 right-6 z-50 p-2 bg-background/50 backdrop-blur-xl rounded-full text-white hover:text-primary transition-colors border border-white/10">
+          <X className="w-5 h-5" />
         </button>
 
         {/* Poster Side */}
-        <div className="w-full md:w-[40%] h-[60vh] md:h-full relative shrink-0 overflow-hidden">
+        <div className="w-full md:w-[40%] h-[50vh] md:h-full relative shrink-0 overflow-hidden">
            {currentPoster ? (
              <img src={currentPoster} alt={movie.title} className="w-full h-full object-cover" />
            ) : (
@@ -158,115 +169,110 @@ export default function MovieDetailsModal({ movie, onClose, onToggleStatus, onNa
         </div>
 
         {/* Details Side */}
-        <div className="w-full md:w-[60%] p-8 md:p-14 flex flex-col relative z-10 bg-surface-container md:h-full overflow-hidden">
-           <div className="flex flex-wrap gap-4 text-xs font-mono text-secondary mb-4 uppercase tracking-[0.2em] shrink-0">
+        <div className="w-full md:w-[60%] p-6 md:p-14 flex flex-col relative z-10 bg-surface-container md:h-full overflow-hidden">
+           <div className="flex flex-wrap gap-2 md:gap-4 text-[10px] md:text-xs font-mono text-secondary mb-4 uppercase tracking-[0.2em] shrink-0">
               <span className="text-white">{movie.phase}</span>
-              <span>•</span>
+              <span className="opacity-30">•</span>
               <span>{details?.release_date?.substring(0, 4) || movie.year}</span>
-              <span>•</span>
-              <span className="text-primary font-bold">{director}</span>
+              <span className="opacity-30">•</span>
+              <span className="text-primary font-bold truncate max-w-[150px]">{director}</span>
            </div>
            
-           <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter mb-4 leading-tight uppercase shrink-0">{movie.title}</h2>
+           <h2 className="text-3xl md:text-5xl lg:text-7xl font-black text-white tracking-tighter mb-4 leading-tight uppercase shrink-0 break-words">{movie.title}</h2>
            
-           <div className="flex-1 overflow-y-auto pr-2 md:pr-6 custom-scrollbar mb-8 flex flex-col">
+           <div className="flex-1 overflow-y-auto pr-2 md:pr-6 custom-scrollbar mb-6 md:mb-8 flex flex-col">
               {loading ? (
                  <div className="flex flex-col pt-2 animate-pulse w-full max-w-2xl text-white">
                    <div className="w-3/4 h-6 bg-white/5 rounded mb-8"></div>
                    <div className="flex gap-2 mb-8">
                      <div className="w-16 h-4 bg-white/5 rounded-full"></div>
                      <div className="w-20 h-4 bg-white/5 rounded-full"></div>
-                     <div className="w-14 h-4 bg-white/5 rounded-full"></div>
                    </div>
                    <div className="w-full h-3 bg-white/5 rounded mb-3"></div>
                    <div className="w-full h-3 bg-white/5 rounded mb-3"></div>
-                   <div className="w-5/6 h-3 bg-white/5 rounded mb-3"></div>
-                   <div className="w-2/3 h-3 bg-white/5 rounded"></div>
                  </div>
               ) : details ? (
                  <>
-                   <div className="flex items-center gap-6 mb-8">
+                   <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-6 md:mb-8">
                       <div className="flex flex-col">
                          <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Runtime</p>
-                         <p className="text-xl font-bold text-white">{movie.runtime}m</p>
+                         <p className="text-lg md:text-xl font-bold text-white">{movie.runtime}m</p>
                       </div>
-                      <div className="w-px h-8 bg-white/10" />
+                      <div className="w-px h-6 md:h-8 bg-white/10" />
                       <div className="flex flex-col">
-                         <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Post-Credits</p>
+                         <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Scenes</p>
                          <div className="flex items-center gap-1">
-                            <p className="text-xl font-bold text-white">{movie.postCredits}</p>
+                            <p className="text-lg md:text-xl font-bold text-white">{movie.postCredits}</p>
                             <span className="material-symbols-outlined text-primary text-sm">stars</span>
                          </div>
                       </div>
-                      <div className="w-px h-8 bg-white/10 hidden sm:block" />
-                      <div className="hidden sm:flex flex-col">
+                      <div className="w-px h-6 md:h-8 bg-white/10" />
+                      <div className="flex flex-col">
                          <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-1">Status</p>
-                         <span className={`text-[10px] font-bold uppercase tracking-widest ${movie.status === 'WATCHED' ? 'text-tertiary' : 'text-secondary'}`}>
+                         <span className={`text-[10px] font-bold uppercase tracking-widest ${movie.status === 'WATCHED' ? 'text-tertiary shadow-[0_0_10px_rgba(40,167,69,0.3)]' : 'text-secondary'}`}>
                             {movie.status === 'WATCHED' ? 'Archived' : movie.status === 'TO_WATCH' ? 'In Queue' : 'Unread'}
                          </span>
                       </div>
                    </div>
 
-                   {details.tagline && <p className="text-base md:text-xl text-primary font-medium italic mb-6">"{details.tagline}"</p>}
+                   {details.tagline && <p className="text-sm md:text-xl text-primary font-medium italic mb-6">"{details.tagline}"</p>}
                    
                    <div className="flex flex-wrap gap-2 mb-6">
                       {details.genres?.map((g: any) => (
-                        <span key={g.id} className="px-3 py-1 border border-white/10 rounded-full text-[10px] uppercase font-bold tracking-widest text-on-surface-variant bg-white/5 text-white/60">
+                        <span key={g.id} className="px-3 py-1 border border-white/10 rounded-full text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-white/50 bg-white/5">
                           {g.name}
                         </span>
                       ))}
                    </div>
                    
-                   <p className="text-on-surface text-sm md:text-base leading-relaxed text-white/80 font-light max-w-2xl">
+                   <p className="text-on-surface text-sm md:text-base leading-relaxed text-white/70 font-light max-w-2xl">
                       {details.overview || "No overview available in the sacred timeline archives."}
                    </p>
                  </>
               ) : (
                  <div className="flex items-center text-secondary h-full text-white">
-                    <p className="font-mono text-xs tracking-widest uppercase">Failed to retrieve API transmission.</p>
+                    <p className="font-mono text-xs tracking-widest uppercase">Failed API Transmission</p>
                  </div>
               )}
            </div>
 
-           <div className="pt-6 border-t border-white/10 mt-auto shrink-0 flex flex-col xl:flex-row gap-6 xl:items-end justify-between">
-              <div>
-                <p className="text-[10px] text-secondary font-mono tracking-[0.3em] uppercase mb-4 font-bold">Authorized Transmissions</p>
-                <div className="flex flex-wrap gap-3">
+           <div className="pt-6 border-t border-white/10 mt-auto shrink-0 flex flex-col xl:flex-row gap-6 items-center md:items-end justify-between">
+              <div className="w-full xl:w-auto">
+                <p className="text-[10px] text-zinc-500 font-mono tracking-[0.3em] uppercase mb-4 font-bold text-center md:text-left">Authorized Transmission</p>
+                <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                   <motion.a 
                     whileTap={{ scale: 0.97 }}
                     href={streamInfo.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-3 px-8 py-4 rounded-xl text-white font-bold uppercase tracking-widest text-xs transition-shadow shadow-2xl border ${streamInfo.bg}`}
+                    className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-3 px-6 md:px-8 py-3.5 md:py-4 rounded-xl text-white font-bold uppercase tracking-widest text-[10px] md:text-xs transition-shadow shadow-2xl border ${streamInfo.bg}`}
                   >
-                    <Play className="w-4 h-4 fill-current" /> Watch on {streamInfo.name}
+                    <Play className="w-4 h-4 fill-current" /> {streamInfo.name}
                   </motion.a>
                 </div>
               </div>
               
-              <div className="flex items-center gap-4 self-end xl:mb-1">
+              <div className="flex items-center justify-center gap-6 md:gap-4 self-center md:self-end mb-4 md:mb-1">
                 <div className="flex flex-col items-center gap-2">
                   <motion.button 
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onToggleStatus(movie.id, movie.status === 'TO_WATCH' ? 'UNWATCHED' : 'TO_WATCH')}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${movie.status === 'TO_WATCH' ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(0,176,215,0.4)]' : 'bg-white/5 text-white border-white/10 hover:bg-white/10'}`}
-                    title="Add to Queue"
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${movie.status === 'TO_WATCH' ? 'bg-secondary text-black border-secondary shadow-[0_0_20px_rgba(0,176,215,0.4)]' : 'bg-white/5 text-white border-white/10 hover:bg-white/10'}`}
                   >
-                     {movie.status === 'TO_WATCH' ? <Check className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                     {movie.status === 'TO_WATCH' ? <Check className="w-5 h-5 md:w-6 md:h-6" /> : <Plus className="w-5 h-5 md:w-6 md:h-6" />}
                   </motion.button>
-                  <span className="text-[9px] font-mono text-secondary tracking-widest uppercase">Queue</span>
+                  <span className="text-[8px] font-mono text-zinc-500 tracking-widest uppercase">Queue</span>
                 </div>
 
                 <div className="flex flex-col items-center gap-2">
                   <motion.button 
                     whileTap={{ scale: 0.95 }}
                     onClick={() => onToggleStatus(movie.id, movie.status === 'WATCHED' ? 'UNWATCHED' : 'WATCHED')}
-                    className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${movie.status === 'WATCHED' ? 'bg-tertiary text-black border-tertiary shadow-[0_0_20px_rgba(40,167,69,0.4)]' : 'bg-white/5 text-white border-white/10 hover:bg-white/10'}`}
-                    title="Mark Watched"
+                    className={`w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all shadow-xl border ${movie.status === 'WATCHED' ? 'bg-tertiary text-black border-tertiary shadow-[0_0_20px_rgba(40,167,69,0.4)]' : 'bg-white/5 text-white border-white/10 hover:bg-white/10'}`}
                   >
-                     {movie.status === 'WATCHED' ? <EyeOff className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+                     {movie.status === 'WATCHED' ? <EyeOff className="w-5 h-5 md:w-6 md:h-6" /> : <Eye className="w-5 h-5 md:w-6 md:h-6" />}
                   </motion.button>
-                  <span className="text-[9px] font-mono text-tertiary tracking-widest uppercase">Watched</span>
+                  <span className="text-[8px] font-mono text-tertiary tracking-widest uppercase font-bold">Done</span>
                 </div>
               </div>
            </div>
